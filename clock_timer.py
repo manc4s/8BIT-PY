@@ -15,6 +15,7 @@ class Clock_timer(threading.Thread):
         
         #value of clock
         self.bit = 0
+        self.prev_bit = 0
 
         
         self.mode = 0 #select or switch, 1hz = 0, manual = 1
@@ -61,13 +62,19 @@ class Clock_timer(threading.Thread):
 
         if self.bit == 0:
             self.bit = 1
-            self.color = "green"
+            self.color = "#FFD700"
         
         else:
             self.bit = 0
             self.color = "gray"
 
         self.gui_callback(self.color)
+
+
+        if self.bit == 1 and self.prev_bit == 0:
+            self.on_rising_edge()
+
+        self.prev_bit = self.bit
 
         print(self.bit)
 
@@ -118,3 +125,9 @@ class Clock_timer(threading.Thread):
 
 
 
+    def on_rising_edge(self):
+        print("RISING EDGE detected")
+
+
+
+    

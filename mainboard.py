@@ -62,23 +62,22 @@ class Mainboard(threading.Thread):
 
 
         # Main clock LED
-        self.clock_led = self.canvas.create_oval(20, 20, 30, 30, fill="gray")
+        self.clock_led = self.canvas.create_oval(20, 20, 36, 36, fill="gray")
 
         # HLT
-        self.hlt_led = self.canvas.create_oval(60, 20, 70, 30, fill="gray")
+        self.hlt_led = self.canvas.create_oval(60, 20, 76, 36, fill="gray")
         self.hlt_button = tk.Button(root, text="HLT", width=6, height=1, command=self.mhlt_button)
         self.hlt_button.place(x=55, y=40)
 
         # SELECT
-        self.select_led = self.canvas.create_oval(105, 20, 115, 30, fill="gray")
-        self.select_button = tk.Button(root, text="SELECT", width=7, height=1, command = self.mselect_button)
+        self.select_led = self.canvas.create_oval(105, 20, 121, 36, fill="gray")
+        self.select_button = tk.Button(root, text="SELECT", width=7, height=1, command=self.mselect_button)
         self.select_button.place(x=98, y=40)
 
         # MANUAL
-        self.manual_led = self.canvas.create_oval(160, 20, 170, 30, fill="gray")
-        self.manual_button = tk.Button(root, text="MANUAL", width=7, height=1, command = self.mmanual_button)
+        self.manual_led = self.canvas.create_oval(160, 20, 176, 36, fill="gray")
+        self.manual_button = tk.Button(root, text="MANUAL", width=7, height=1, command=self.mmanual_button)
         self.manual_button.place(x=153, y=40)
-
 
 
 
@@ -97,28 +96,12 @@ class Mainboard(threading.Thread):
 
     
     def mhlt_button(self):
-
-        
-
         self.onehz_clock.pause()        
 
 
 
-
-
-
     def mselect_button(self):
-
-    
-
         self.onehz_clock.select_switch()
-
-
-
-
-
-
-
 
 
 
@@ -126,20 +109,24 @@ class Mainboard(threading.Thread):
     def mmanual_button(self):
         
         if self.onehz_clock.button_halt == 0 and self.onehz_clock.mode == 1:
-            self.canvas.itemconfig(self.manual_led, fill="green")
+            self.canvas.itemconfig(self.manual_led, fill="#FFD700")
+            
+            
+            self.onehz_clock.manual_pulse()
+            
             #small break just to show manual button was pressed, so it goes green for a sec or two in this case.
             self.root.after(200, lambda: self.canvas.itemconfig(self.manual_led, fill="gray"))
     
 
 
-            self.onehz_clock.manual_pulse()
+            
 
 
 
 
 
 
-    def syncing_connections(self):
+    def syncing_connections(self, force_manual_gray = False):
         halted = self.onehz_clock.button_halt
         manual = self.onehz_clock.mode
 
@@ -149,24 +136,22 @@ class Mainboard(threading.Thread):
         else:
             self.canvas.itemconfig(self.clock_led, fill=self.onehz_clock.color)
 
-        # Manual LED
-        if halted:
-            self.canvas.itemconfig(self.manual_led, fill="red")
-        
-        elif manual == 0 and self.canvas.itemcget(self.manual_led, "fill") != "green":
-            self.canvas.itemconfig(self.manual_led, fill="red") 
-
-        else:
-            self.canvas.itemconfig(self.manual_led, fill="gray")
-            
+        # Manual LED — ONLY SET when not blinking yellow
+        current_color = self.canvas.itemcget(self.manual_led, "fill")
+        if current_color != "#FFD700":
+            if manual == 1 and halted == 0:
+                self.canvas.itemconfig(self.manual_led, fill="gray")  # ready
+            else:
+                self.canvas.itemconfig(self.manual_led, fill="red")   # blocked
 
         # HLT LED
-        self.canvas.itemconfig(self.hlt_led, fill="green" if halted else "gray")
+        self.canvas.itemconfig(self.hlt_led, fill="#FFD700" if halted else "gray")
 
         # SELECT LED
-        self.canvas.itemconfig(self.select_led, fill="green" if manual else "gray")
+        self.canvas.itemconfig(self.select_led, fill="#FFD700" if manual else "gray")
 
         self.root.after(100, self.syncing_connections)
+
 
 
 
