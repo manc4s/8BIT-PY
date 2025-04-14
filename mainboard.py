@@ -28,21 +28,47 @@ class Mainboard:
         self.manual_button.place(x=153, y=60)
         
         # LEDS AND BUTTONS FOR INPUT A --------------------------------------------------------------------------------------------------
-        tk.Label(root, text="Register A", font=("Arial", 14, "bold")).place(x=400, y=0)
         
-        self.regA_leds = []
+        
+        # BUS
+        tk.Label(root, text="Bus", font=("Arial", 14, "bold")).place(x=400, y=0)
+        self.bus_leds = []
         for i in range(8):
             x = 400 + i * 30
-            led = self.canvas.create_oval(x, 40, x + 16, 56, fill="gray")
-            self.regA_leds.append(led)
-    
-            btn = tk.Button(root, text=str(i), width=2)
-            btn.place(x=x, y=60)
+            self.bus_leds.append(self.canvas.create_oval(x, 40, x + 16, 56, fill="gray"))
         
+        # REGISTER A
+        tk.Label(root, text="Input Byte", font=("Arial", 14, "bold")).place(x=400, y=80)
+        self.regA_leds = []
+        for i in range(8):
+            bit = 7 - i
+            x = 400 + i * 30
+            self.regA_leds.append(self.canvas.create_oval(x, 120, x + 16, 136, fill="gray"))
+            tk.Button(root, text=str(bit), width=2).place(x=x, y=145)
         
+        # REGISTER 1
+        tk.Label(root, text="Register 1", font=("Arial", 14, "bold")).place(x=400, y=185)
+        self.reg1_leds = []
+        for i in range(8):
+            x = 400 + i * 30
+            self.reg1_leds.append(self.canvas.create_oval(x, 225, x + 16, 241, fill="gray"))
         
-        self.syncing_connections()        
+        # REGISTER 2
+        tk.Label(root, text="Register 2", font=("Arial", 14, "bold")).place(x=400, y=265)
+        self.reg2_leds = []
+        for i in range(8):
+            x = 400 + i * 30
+            self.reg2_leds.append(self.canvas.create_oval(x, 305, x + 16, 321, fill="gray"))
         
+        # INSTRUCTION REGISTER
+        tk.Label(root, text="Instruction Register", font=("Arial", 14, "bold")).place(x=400, y=345)
+        self.inst_reg_leds = []
+        for i in range(8):
+            x = 400 + i * 30
+            self.inst_reg_leds.append(self.canvas.create_oval(x, 385, x + 16, 401, fill="gray"))
+            
+        
+        self.syncing_connections()
 
     def mhlt_button(self):
         """
